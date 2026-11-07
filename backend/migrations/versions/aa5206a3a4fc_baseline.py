@@ -6,10 +6,6 @@ Create Date: 2026-11-06 21:23:50.344924
 
 """
 
-from alembic import op
-import sqlalchemy as sa
-
-
 revision = 'aa5206a3a4fc'
 down_revision = None
 branch_labels = None

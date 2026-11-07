@@ -14,6 +14,16 @@ function stubHealthResponse(status: number, body: unknown) {
   return fetchStub;
 }
 
+function stubUnreachableApi() {
+  const fetchStub = vi.fn(
+    async (_input: RequestInfo | URL): Promise<Response> => {
+      throw new TypeError("Failed to fetch");
+    },
+  );
+  vi.stubGlobal("fetch", fetchStub);
+  return fetchStub;
+}
+
 describe("S4 Show the system status to the developer", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -46,4 +56,16 @@ describe("S4 Show the system status to the developer", () => {
       expect(String(fetchStub.mock.calls[0][0])).toMatch(/\/health$/);
     },
   );
+
+  it('S4.2 shows "API unreachable" when the health check cannot reach the API', async () => {
+    // Arrange
+    const fetchStub = stubUnreachableApi();
+
+    // Act
+    render(<App />);
+
+    // Assert
+    expect(await screen.findByText("API unreachable")).toBeTruthy();
+    expect(String(fetchStub.mock.calls[0][0])).toMatch(/\/health$/);
+  });
 });

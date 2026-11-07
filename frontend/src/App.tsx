@@ -12,7 +12,8 @@ export default function App() {
             ? "All systems connected"
             : "Database unavailable",
         ),
-      );
+      )
+      .catch(() => setMessage("API unreachable"));
   }, []);
 
   return <p>{message}</p>;

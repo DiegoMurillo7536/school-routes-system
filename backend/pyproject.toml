@@ -13,3 +13,7 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+addopts = "-m 'not e2e'"
+markers = [
+    "e2e: starts the real Docker Compose stack; run with `pytest -m e2e`",
+]

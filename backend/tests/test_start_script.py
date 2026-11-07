@@ -31,6 +31,7 @@ with open(observed_path, "w") as observed:
 
 
 def run_start_script(database, api_command):
+    """Run entrypoint.sh against database, with api_command as the API server."""
     env = {
         **os.environ,
         "PATH": f"{VENV_BIN}{os.pathsep}{os.environ['PATH']}",
@@ -48,6 +49,7 @@ def run_start_script(database, api_command):
 
 
 def test_s5_start_script_applies_pending_migration_before_starting_the_api(tmp_path):
+    """The start script applies the pending migration before it starts the API."""
     # Arrange: a fresh database has the baseline migration pending.
     database = tmp_path / "start-script.db"
     observed = tmp_path / "api-observed.json"
@@ -70,6 +72,7 @@ def test_s5_start_script_applies_pending_migration_before_starting_the_api(tmp_p
 
 
 def test_s6_start_script_does_not_start_the_api_when_a_migration_fails(tmp_path):
+    """The start script exits with an error and skips the API when a migration fails."""
     # Arrange: the database is stamped with a revision that does not exist, so
     # a real `alembic upgrade head` fails.
     database = tmp_path / "start-script.db"

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+/** Show whether the API and database are reachable, from one /health request. */
 export default function App() {
   const [message, setMessage] = useState("");
 

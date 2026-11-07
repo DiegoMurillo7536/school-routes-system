@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
+/** Replace global fetch with a spy that runs the given implementation. */
 function stubFetch(
   implementation: (input: RequestInfo | URL) => Promise<Response>,
 ) {
@@ -10,6 +11,7 @@ function stubFetch(
   return fetchStub;
 }
 
+/** Stub fetch to answer with the given status and JSON body. */
 function stubHealthResponse(status: number, body: unknown) {
   return stubFetch(
     async () =>
@@ -20,6 +22,7 @@ function stubHealthResponse(status: number, body: unknown) {
   );
 }
 
+/** Stub fetch to reject as it does when the API cannot be reached. */
 function stubUnreachableApi() {
   return stubFetch(async () => {
     throw new TypeError("Failed to fetch");

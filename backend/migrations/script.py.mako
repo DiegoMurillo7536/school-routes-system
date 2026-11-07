@@ -17,8 +17,10 @@ depends_on = ${repr(depends_on)}
 
 
 def upgrade() -> None:
+    """Apply this migration."""
     ${upgrades if upgrades else "pass"}
 
 
 def downgrade() -> None:
+    """Revert this migration."""
     ${downgrades if downgrades else "pass"}

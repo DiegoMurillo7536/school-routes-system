@@ -30,6 +30,7 @@ class ComposeStack:
     def compose(
         self, *arguments: str, timeout: int = COMMAND_TIMEOUT_SECONDS
     ) -> subprocess.CompletedProcess[str]:
+        """Run a docker compose command for this project in the checkout folder."""
         # The developer's COMPOSE_* variables must not change what gets started.
         env = {
             name: value
@@ -46,24 +47,28 @@ class ComposeStack:
         )
 
     def up(self) -> subprocess.CompletedProcess[str]:
+        """Build and start the stack, recording the attempt so teardown cleans it up."""
         self.up_attempted = True
         return self.compose(
             "up", "--build", "--detach", "--wait", timeout=BUILD_TIMEOUT_SECONDS
         )
 
     def containers(self) -> list[dict]:
+        """Return the project's containers, parsed from docker compose ps."""
         # --all keeps a container that exited visible to the assertions.
         result = self.compose("ps", "--all", "--format", "json")
         assert result.returncode == 0, result.stderr
         return [json.loads(line) for line in result.stdout.splitlines() if line]
 
     def logs(self) -> str:
+        """Return the tail of the services' logs for failure messages."""
         result = self.compose("logs", "--no-color", "--tail", "50")
         return (result.stdout + result.stderr)[-DIAGNOSTIC_CHARACTERS:]
 
 
 @pytest.fixture
 def stack(tmp_path):
+    """Yield a uniquely named stack, removing it afterwards if it was started."""
     # Only teardown lives here: a failed start must be a test failure, not a
     # fixture error.
     compose_stack = ComposeStack(
@@ -81,6 +86,7 @@ def stack(tmp_path):
 
 
 def copy_fresh_checkout(destination: Path) -> None:
+    """Copy the repository's tracked and unignored files into destination."""
     # The list leaves out ignored files, so the copy has no .env, node_modules
     # or .venv, and the developer's own .env is never used.
     listed = subprocess.run(
@@ -100,6 +106,7 @@ def copy_fresh_checkout(destination: Path) -> None:
 
 
 def image_id(container_id: str) -> str:
+    """Return the ID of the image a container runs from."""
     # Image names are not enough: two services built from one Dockerfile get
     # different names for the same image.
     result = subprocess.run(
@@ -113,6 +120,7 @@ def image_id(container_id: str) -> str:
 
 
 def wait_for_status(stack: ComposeStack, path: str, status: int) -> httpx.Response:
+    """Poll a path through the frontend until it answers status, or fail the test."""
     deadline = time.monotonic() + HTTP_WAIT_SECONDS
     last_seen = "no response"
     # trust_env=False keeps a developer's proxy settings away from localhost.
@@ -136,6 +144,7 @@ def wait_for_status(stack: ComposeStack, path: str, status: int) -> httpx.Respon
 
 
 def assert_health_body(response: httpx.Response, expected: dict[str, str]) -> None:
+    """Assert that the response is the API's JSON and matches expected."""
     # A single-page fallback answers /health with 200 and index.html, so the
     # content type is checked first to report that clearly.
     content_type = response.headers.get("content-type", "")
@@ -147,6 +156,7 @@ def assert_health_body(response: httpx.Response, expected: dict[str, str]) -> No
 
 @pytest.mark.e2e
 def test_s1_one_command_starts_the_connected_system_from_three_images(stack):
+    """A fresh checkout starts three connected services, each from its own image."""
     # Arrange: a fresh checkout with .env copied from .env.example.
     copy_fresh_checkout(stack.folder)
     env_example = stack.folder / ".env.example"

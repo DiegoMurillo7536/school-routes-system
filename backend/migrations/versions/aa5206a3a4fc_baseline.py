@@ -13,8 +13,10 @@ depends_on = None
 
 
 def upgrade() -> None:
+    """Apply the baseline, which creates no schema."""
     pass
 
 
 def downgrade() -> None:
+    """Revert the baseline, which removes no schema."""
     pass

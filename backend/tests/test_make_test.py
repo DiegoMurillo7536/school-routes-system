@@ -18,6 +18,7 @@ INHERITED_MAKE_VARIABLES = (
 
 
 def run_make(*arguments: str) -> subprocess.CompletedProcess[str]:
+    """Run make at the repo root, isolated from any outer make's variables."""
     # This test also runs under the real "make test", so the outer make's
     # variables must not leak in. The guard stops a Makefile that ignores the
     # overrides from running pytest inside pytest forever.
@@ -37,6 +38,7 @@ def run_make(*arguments: str) -> subprocess.CompletedProcess[str]:
 
 
 def stand_in_suite(marker: Path, exit_code: int) -> str:
+    """Return a shell command that touches marker and exits with exit_code."""
     # The subshell keeps "exit" from ending a recipe that runs both suites.
     return f"(touch {shlex.quote(str(marker))}; exit {exit_code})"
 
@@ -52,6 +54,7 @@ def stand_in_suite(marker: Path, exit_code: int) -> str:
 def test_s7_make_test_runs_both_suites_and_fails_if_either_fails(
     tmp_path, backend_exit, frontend_exit, make_succeeds
 ):
+    """make test runs both real suites by default and fails if either fails."""
     if RECURSION_GUARD in os.environ:
         pytest.fail("make test ignored BACKEND_TEST and ran pytest again")
 

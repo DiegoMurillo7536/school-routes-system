@@ -1,0 +1,19 @@
+[project]
+name = "school-route-system-backend"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = ["alembic", "fastapi", "psycopg[binary]", "pydantic", "sqlalchemy", "uvicorn"]
+
+[dependency-groups]
+dev = [
+    "httpx",
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-m 'not e2e'"
+markers = [
+    "e2e: starts the real Docker Compose stack; run with `pytest -m e2e`",
+]

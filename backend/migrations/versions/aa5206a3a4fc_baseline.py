@@ -1,0 +1,22 @@
+"""baseline
+
+Revision ID: aa5206a3a4fc
+Revises: 
+Create Date: 2026-11-06 21:23:50.344924
+
+"""
+
+revision = 'aa5206a3a4fc'
+down_revision = None
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    """Apply the baseline, which creates no schema."""
+    pass
+
+
+def downgrade() -> None:
+    """Revert the baseline, which removes no schema."""
+    pass

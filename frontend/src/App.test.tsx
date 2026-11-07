@@ -1,22 +1,6 @@
-/// <reference types="vite/client" />
 import { render, screen } from "@testing-library/react";
-import type { ComponentType } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-
-// A static import of a missing file aborts the whole test file before any test
-// runs. import.meta.glob yields an empty map instead, so a missing component is
-// reported as a failed assertion in each test below.
-const appModules = import.meta.glob<{ default: ComponentType }>("./App.tsx");
-
-async function loadApp(): Promise<ComponentType> {
-  const loadAppModule = appModules["./App.tsx"];
-  expect(
-    loadAppModule,
-    "src/App.tsx must exist and default-export the status page",
-  ).toBeDefined();
-  const { default: App } = await loadAppModule();
-  return App;
-}
+import App from "./App";
 
 function stubHealthResponse(status: number, body: unknown) {
   const fetchStub = vi.fn(
@@ -53,7 +37,6 @@ describe("S4 Show the system status to the developer", () => {
     async ({ status, body, message }) => {
       // Arrange
       const fetchStub = stubHealthResponse(status, body);
-      const App = await loadApp();
 
       // Act
       render(<App />);

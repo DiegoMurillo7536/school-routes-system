@@ -2,26 +2,28 @@ import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
+function stubFetch(
+  implementation: (input: RequestInfo | URL) => Promise<Response>,
+) {
+  const fetchStub = vi.fn(implementation);
+  vi.stubGlobal("fetch", fetchStub);
+  return fetchStub;
+}
+
 function stubHealthResponse(status: number, body: unknown) {
-  const fetchStub = vi.fn(
-    async (_input: RequestInfo | URL) =>
+  return stubFetch(
+    async () =>
       new Response(JSON.stringify(body), {
         status,
         headers: { "Content-Type": "application/json" },
       }),
   );
-  vi.stubGlobal("fetch", fetchStub);
-  return fetchStub;
 }
 
 function stubUnreachableApi() {
-  const fetchStub = vi.fn(
-    async (_input: RequestInfo | URL): Promise<Response> => {
-      throw new TypeError("Failed to fetch");
-    },
-  );
-  vi.stubGlobal("fetch", fetchStub);
-  return fetchStub;
+  return stubFetch(async () => {
+    throw new TypeError("Failed to fetch");
+  });
 }
 
 describe("S4 Show the system status to the developer", () => {

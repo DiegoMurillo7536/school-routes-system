@@ -2,7 +2,7 @@
 name = "school-route-system-backend"
 version = "0.1.0"
 requires-python = ">=3.14"
-dependencies = ["alembic", "fastapi", "psycopg[binary]", "sqlalchemy", "uvicorn"]
+dependencies = ["alembic", "fastapi", "psycopg[binary]", "pydantic", "sqlalchemy", "uvicorn"]
 
 [dependency-groups]
 dev = [

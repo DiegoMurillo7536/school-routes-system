@@ -4,11 +4,11 @@ import shutil
 import subprocess
 import time
 import uuid
-from dataclasses import dataclass
 from pathlib import Path
 
 import httpx
 import pytest
+from pydantic import BaseModel
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 FRONTEND_URL = "http://localhost:8080"
@@ -21,8 +21,7 @@ POLL_INTERVAL_SECONDS = 1
 DIAGNOSTIC_CHARACTERS = 4000
 
 
-@dataclass
-class ComposeStack:
+class ComposeStack(BaseModel):
     project: str
     folder: Path
     up_attempted: bool = False

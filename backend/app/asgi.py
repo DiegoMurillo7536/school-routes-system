@@ -1,4 +1,4 @@
-from app.database import database_is_reachable
-from app.main import create_app
+from app.database import Database
+from app.main import SchoolRouteApi
 
-app = create_app(database_is_reachable)
+app = SchoolRouteApi(Database().is_reachable).build()

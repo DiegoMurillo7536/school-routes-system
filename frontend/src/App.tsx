@@ -1,21 +1,32 @@
-import { useEffect, useState } from "react";
+import { Component } from "react";
+
+/** The state of App: the status message shown to the developer. */
+interface AppState {
+  message: string;
+}
 
 /** Show whether the API and database are reachable, from one /health request. */
-export default function App() {
-  const [message, setMessage] = useState("");
+export default class App extends Component<object, AppState> {
+  state: AppState = { message: "" };
 
-  useEffect(() => {
-    fetch("/health")
-      .then((response) => response.json())
-      .then((health) =>
-        setMessage(
+  /** Request /health once and turn the result into the status message. */
+  async componentDidMount() {
+    try {
+      const response = await fetch("/health");
+      const health = await response.json();
+      this.setState({
+        message:
           health.database === "ok"
             ? "All systems connected"
             : "Database unavailable",
-        ),
-      )
-      .catch(() => setMessage("API unreachable"));
-  }, []);
+      });
+    } catch {
+      this.setState({ message: "API unreachable" });
+    }
+  }
 
-  return <p>{message}</p>;
+  /** Render the current status message. */
+  render() {
+    return <p>{this.state.message}</p>;
+  }
 }

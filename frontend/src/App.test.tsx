@@ -2,31 +2,36 @@ import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
-/** Replace global fetch with a spy that runs the given implementation. */
-function stubFetch(
-  implementation: (input: RequestInfo | URL) => Promise<Response>,
-) {
-  const fetchStub = vi.fn(implementation);
-  vi.stubGlobal("fetch", fetchStub);
-  return fetchStub;
-}
+/** Replaces global fetch with spies that answer as each scenario needs. */
+class FetchStub {
+  /** Replace global fetch with a spy that runs the given implementation. */
+  private static install(
+    implementation: (input: RequestInfo | URL) => Promise<Response>,
+  ) {
+    const fetchStub = vi.fn(implementation);
+    vi.stubGlobal("fetch", fetchStub);
+    return fetchStub;
+  }
 
-/** Stub fetch to answer with the given status and JSON body. */
-function stubHealthResponse(status: number, body: unknown) {
-  return stubFetch(
-    async () =>
+  /** Stub fetch to answer with the given status and JSON body. */
+  static healthResponse(status: number, body: unknown) {
+    /** Answer with the given status and JSON body. */
+    const answer = async () =>
       new Response(JSON.stringify(body), {
         status,
         headers: { "Content-Type": "application/json" },
-      }),
-  );
-}
+      });
+    return FetchStub.install(answer);
+  }
 
-/** Stub fetch to reject as it does when the API cannot be reached. */
-function stubUnreachableApi() {
-  return stubFetch(async () => {
-    throw new TypeError("Failed to fetch");
-  });
+  /** Stub fetch to reject as it does when the API cannot be reached. */
+  static unreachableApi() {
+    /** Reject with the error fetch raises for an unreachable server. */
+    const reject = async () => {
+      throw new TypeError("Failed to fetch");
+    };
+    return FetchStub.install(reject);
+  }
 }
 
 describe("S4 Show the system status to the developer", () => {
@@ -51,7 +56,7 @@ describe("S4 Show the system status to the developer", () => {
     'S4.1 shows "$message" when the health result is $healthResult',
     async ({ status, body, message }) => {
       // Arrange
-      const fetchStub = stubHealthResponse(status, body);
+      const fetchStub = FetchStub.healthResponse(status, body);
 
       // Act
       render(<App />);
@@ -64,7 +69,7 @@ describe("S4 Show the system status to the developer", () => {
 
   it('S4.2 shows "API unreachable" when the health check cannot reach the API', async () => {
     // Arrange
-    const fetchStub = stubUnreachableApi();
+    const fetchStub = FetchStub.unreachableApi();
 
     // Act
     render(<App />);

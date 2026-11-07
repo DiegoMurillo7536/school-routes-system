@@ -2,6 +2,8 @@ import asyncio
 
 import httpx
 
+from app.main import create_app
+
 
 def get_health(api) -> httpx.Response:
     async def send_request() -> httpx.Response:
@@ -15,10 +17,6 @@ def get_health(api) -> httpx.Response:
 
 
 def test_s2_health_reports_api_and_database_ok_when_database_is_reachable():
-    # Imported here so a missing app is reported as this test failing,
-    # not as a collection error.
-    from app.main import create_app
-
     # Arrange: database_check is the seam that replaces a live database.
     api = create_app(database_check=lambda: True)
 
@@ -31,8 +29,6 @@ def test_s2_health_reports_api_and_database_ok_when_database_is_reachable():
 
 
 def test_s3_health_reports_database_unavailable_when_database_is_unreachable():
-    from app.main import create_app
-
     # Arrange: a failing database_check stands in for an unreachable database.
     api = create_app(database_check=lambda: False)
 

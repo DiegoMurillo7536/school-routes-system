@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
@@ -34,6 +34,14 @@ class FetchStub {
   }
 }
 
+/** Lets work started by the page, such as pending promises, finish before asserting. */
+class PendingWork {
+  /** Wait for queued promises and timers to run so any late update has been rendered. */
+  static async settle() {
+    await act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
+  }
+}
+
 afterEach(() => {
   vi.unstubAllGlobals();
 });
@@ -58,48 +66,6 @@ describe("S1 Introduce the system to a visitor without an account", () => {
         "Un sistema para organizar las rutas escolares y mantener informadas a las familias.",
       ),
     ).toBeTruthy();
-  });
-});
-
-describe("S4 Show the system status to the developer", () => {
-  it.each([
-    {
-      healthResult: "healthy",
-      status: 200,
-      body: { api: "ok", database: "ok" },
-      message: "All systems connected",
-    },
-    {
-      healthResult: "database unavailable",
-      status: 503,
-      body: { api: "ok", database: "unavailable" },
-      message: "Database unavailable",
-    },
-  ])(
-    'S4.1 shows "$message" when the health result is $healthResult',
-    async ({ status, body, message }) => {
-      // Arrange
-      const fetchStub = FetchStub.healthResponse(status, body);
-
-      // Act
-      render(<App />);
-
-      // Assert
-      expect(await screen.findByText(message)).toBeTruthy();
-      expect(String(fetchStub.mock.calls[0][0])).toMatch(/\/health$/);
-    },
-  );
-
-  it('S4.2 shows "API unreachable" when the health check cannot reach the API', async () => {
-    // Arrange
-    const fetchStub = FetchStub.unreachableApi();
-
-    // Act
-    render(<App />);
-
-    // Assert
-    expect(await screen.findByText("API unreachable")).toBeTruthy();
-    expect(String(fetchStub.mock.calls[0][0])).toMatch(/\/health$/);
   });
 });
 
@@ -147,4 +113,24 @@ describe("S2 List the four phases in order", () => {
       expect(within(phase).getByText("Planificada")).toBeTruthy();
     },
   );
+});
+
+describe("S4 Do not show the system status message", () => {
+  it("S4 does not show a message about the API or database connection when both are connected", async () => {
+    // Arrange
+    FetchStub.healthResponse(200, { api: "ok", database: "ok" });
+
+    // Act
+    render(<App />);
+    await screen.findByRole("heading", {
+      level: 1,
+      name: "School Route System",
+    });
+    await PendingWork.settle();
+
+    // Assert
+    expect(screen.queryByText("All systems connected")).toBeNull();
+    expect(screen.queryByText("Database unavailable")).toBeNull();
+    expect(screen.queryByText("API unreachable")).toBeNull();
+  });
 });

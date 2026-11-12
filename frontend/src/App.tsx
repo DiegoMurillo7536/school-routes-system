@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { IndexPageCopy } from "./constants";
 
 /** The state of App: the status message shown to the developer. */
 interface AppState {
@@ -25,8 +26,16 @@ export default class App extends Component<object, AppState> {
     }
   }
 
-  /** Render the current status message. */
+  /** Render the system name, its description and the current status message. */
   render() {
-    return <p>{this.state.message}</p>;
+    return (
+      <main className="mx-auto max-w-2xl p-8 font-sans">
+        <h1 className="text-4xl text-persian-blue-700">
+          {IndexPageCopy.SYSTEM_NAME}
+        </h1>
+        <p className="mt-4">{IndexPageCopy.DESCRIPTION}</p>
+        <p className="mt-4">{this.state.message}</p>
+      </main>
+    );
   }
 }

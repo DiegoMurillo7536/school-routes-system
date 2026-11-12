@@ -6,7 +6,7 @@ interface AppState {
   message: string;
 }
 
-/** Show whether the API and database are reachable, from one /health request. */
+/** Index page: introduce the system and show the /health status message. */
 export default class App extends Component<object, AppState> {
   state: AppState = { message: "" };
 

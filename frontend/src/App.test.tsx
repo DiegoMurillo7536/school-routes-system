@@ -34,11 +34,11 @@ class FetchStub {
   }
 }
 
-describe("S1 Introduce the system to a visitor without an account", () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
+describe("S1 Introduce the system to a visitor without an account", () => {
   it("S1 shows the system name as the main heading and its description", async () => {
     // Arrange
     FetchStub.healthResponse(200, { api: "ok", database: "ok" });
@@ -62,10 +62,6 @@ describe("S1 Introduce the system to a visitor without an account", () => {
 });
 
 describe("S4 Show the system status to the developer", () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   it.each([
     {
       healthResult: "healthy",

@@ -24,6 +24,11 @@ class FetchStub {
     return FetchStub.install(answer);
   }
 
+  /** Stub fetch to answer as it does when the API and the database are connected. */
+  static connectedApi() {
+    return FetchStub.healthResponse(200, { api: "ok", database: "ok" });
+  }
+
   /** Stub fetch to reject as it does when the API cannot be reached. */
   static unreachableApi() {
     /** Reject with the error fetch raises for an unreachable server. */
@@ -49,7 +54,7 @@ afterEach(() => {
 describe("S1 Introduce the system to a visitor without an account", () => {
   it("S1 shows the system name as the main heading and its description", async () => {
     // Arrange
-    FetchStub.healthResponse(200, { api: "ok", database: "ok" });
+    FetchStub.connectedApi();
 
     // Act
     render(<App />);
@@ -97,7 +102,7 @@ describe("S2 List the four phases in order", () => {
     'S2 shows phase $number "$title" in position $number with its description and status "Planificada"',
     async ({ number, title, description }) => {
       // Arrange
-      FetchStub.healthResponse(200, { api: "ok", database: "ok" });
+      FetchStub.connectedApi();
 
       // Act
       render(<App />);
@@ -118,7 +123,7 @@ describe("S2 List the four phases in order", () => {
 describe("S4 Do not show the system status message", () => {
   it("S4 does not show a message about the API or database connection when both are connected", async () => {
     // Arrange
-    FetchStub.healthResponse(200, { api: "ok", database: "ok" });
+    FetchStub.connectedApi();
 
     // Act
     render(<App />);

@@ -22,8 +22,16 @@
   --color-persian-blue-950: #18174f;
 }
 
-/* Headings use the display font by default, so pages need no extra class. */
+/* Page-wide defaults, so the page never falls back to browser styles.
+   Headings use the display font by default, so pages need no extra class. */
 @layer base {
+  body {
+    background-color: var(--color-slate-50);
+    color: var(--color-slate-800);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
   h1,
   h2,
   h3,

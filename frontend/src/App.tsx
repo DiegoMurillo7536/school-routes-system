@@ -1,32 +1,22 @@
 import { Component } from "react";
+import Hero from "./Hero";
+import PhasesSection from "./PhasesSection";
+import SiteFooter from "./SiteFooter";
+import SiteHeader from "./SiteHeader";
 
-/** The state of App: the status message shown to the developer. */
-interface AppState {
-  message: string;
-}
-
-/** Show whether the API and database are reachable, from one /health request. */
-export default class App extends Component<object, AppState> {
-  state: AppState = { message: "" };
-
-  /** Request /health once and turn the result into the status message. */
-  async componentDidMount() {
-    try {
-      const response = await fetch("/health");
-      const health = await response.json();
-      this.setState({
-        message:
-          health.database === "ok"
-            ? "All systems connected"
-            : "Database unavailable",
-      });
-    } catch {
-      this.setState({ message: "API unreachable" });
-    }
-  }
-
-  /** Render the current status message. */
+/** Index page: a landing page that introduces the system and lists its phases. */
+export default class App extends Component {
+  /** Render the header, the hero, the phases section and the footer. */
   render() {
-    return <p>{this.state.message}</p>;
+    return (
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader />
+        <main className="flex-1">
+          <Hero />
+          <PhasesSection />
+        </main>
+        <SiteFooter />
+      </div>
+    );
   }
 }

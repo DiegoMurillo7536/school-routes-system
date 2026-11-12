@@ -12,6 +12,12 @@ export class PhaseStatus {
   static readonly AVAILABLE = "Disponible";
 }
 
+/** One of the values defined in PhaseStatus; any other string is a type error. */
+export type PhaseStatusValue = (typeof PhaseStatus)[Exclude<
+  keyof typeof PhaseStatus,
+  "prototype"
+>];
+
 /** The copy and status of each phase listed on the index page, in order. */
 export class PhaseCopy {
   static readonly PHASES = [

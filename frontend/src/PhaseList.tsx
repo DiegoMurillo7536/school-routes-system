@@ -1,11 +1,11 @@
 import { Component } from "react";
-import { PhaseCopy } from "./constants";
+import { PhaseCopy, type PhaseStatusValue } from "./constants";
 
 /** A phase shown on the index page. */
-interface Phase {
+export interface Phase {
   title: string;
   description: string;
-  status: string;
+  status: PhaseStatusValue;
 }
 
 /** The props of PhaseList: the phases to show, defaulting to the real ones. */

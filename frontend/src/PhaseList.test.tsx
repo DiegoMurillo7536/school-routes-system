@@ -1,13 +1,18 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import PhaseList from "./PhaseList";
+import type { PhaseStatusValue } from "./constants";
+import PhaseList, { type Phase } from "./PhaseList";
 
 /** Builds phase data for PhaseList where phase 1 has a chosen status. */
 class PhaseFixture {
-  static readonly STATUSES = ["Planificada", "En progreso", "Disponible"];
+  static readonly STATUSES: readonly PhaseStatusValue[] = [
+    "Planificada",
+    "En progreso",
+    "Disponible",
+  ];
 
   /** Return four phases where phase 1 has the given status and the rest are "Planificada". */
-  static withFirstStatus(status: string) {
+  static withFirstStatus(status: PhaseStatusValue): Phase[] {
     return [
       { title: "Fase uno", description: "Descripción uno.", status },
       {
@@ -30,7 +35,7 @@ class PhaseFixture {
 }
 
 describe("S3 Show the status a phase has been given", () => {
-  it.each([
+  it.each<{ status: PhaseStatusValue }>([
     { status: "Planificada" },
     { status: "En progreso" },
     { status: "Disponible" },

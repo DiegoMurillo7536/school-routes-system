@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
@@ -101,4 +101,50 @@ describe("S4 Show the system status to the developer", () => {
     expect(await screen.findByText("API unreachable")).toBeTruthy();
     expect(String(fetchStub.mock.calls[0][0])).toMatch(/\/health$/);
   });
+});
+
+describe("S2 List the four phases in order", () => {
+  it.each([
+    {
+      number: 1,
+      title: "Administradores de rutas",
+      description: "Registra a las personas que gestionarán las rutas.",
+    },
+    {
+      number: 2,
+      title: "Estudiantes",
+      description: "Registra a los estudiantes que usan las rutas.",
+    },
+    {
+      number: 3,
+      title: "Padres y acudientes o tutores",
+      description:
+        "Registra a los padres y acudientes o tutores de cada estudiante.",
+    },
+    {
+      number: 4,
+      title: "Ejecución de rutas",
+      description:
+        "Pon en marcha las rutas con los administradores, estudiantes, padres y acudientes o tutores registrados.",
+    },
+  ])(
+    'S2 shows phase $number "$title" in position $number with its description and status "Planificada"',
+    async ({ number, title, description }) => {
+      // Arrange
+      FetchStub.healthResponse(200, { api: "ok", database: "ok" });
+
+      // Act
+      render(<App />);
+
+      // Assert
+      const phaseList = await screen.findByRole("list");
+      const phases = within(phaseList).getAllByRole("listitem");
+      expect(phases).toHaveLength(4);
+      const phase = phases[number - 1];
+      expect(phase.textContent).toMatch(new RegExp(`\\b${number}\\b`));
+      expect(within(phase).getByRole("heading", { name: title })).toBeTruthy();
+      expect(within(phase).getByText(description)).toBeTruthy();
+      expect(within(phase).getByText("Planificada")).toBeTruthy();
+    },
+  );
 });

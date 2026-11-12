@@ -34,6 +34,33 @@ class FetchStub {
   }
 }
 
+describe("S1 Introduce the system to a visitor without an account", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("S1 shows the system name as the main heading and its description", async () => {
+    // Arrange
+    FetchStub.healthResponse(200, { api: "ok", database: "ok" });
+
+    // Act
+    render(<App />);
+
+    // Assert
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: "School Route System",
+      }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Un sistema para organizar las rutas escolares y mantener informadas a las familias.",
+      ),
+    ).toBeTruthy();
+  });
+});
+
 describe("S4 Show the system status to the developer", () => {
   afterEach(() => {
     vi.unstubAllGlobals();

@@ -1,5 +1,9 @@
 import { Component } from "react";
-import { PhaseCopy, type PhaseStatusValue } from "./constants";
+import {
+  PhaseCopy,
+  PhaseStatusStyle,
+  type PhaseStatusValue,
+} from "./constants";
 
 /** A phase shown on the index page. */
 export interface Phase {
@@ -18,16 +22,25 @@ export default class PhaseList extends Component<PhaseListProps> {
   /** Render one numbered card per phase, in the order they are defined. */
   render() {
     return (
-      <ol className="mt-8 space-y-4">
+      <ol
+        role="list"
+        className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
+      >
         {(this.props.phases ?? PhaseCopy.PHASES).map((phase, index) => (
           <li
             key={phase.title}
-            className="rounded border border-persian-blue-200 p-4"
+            className="flex flex-col rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 motion-safe:transition motion-safe:duration-200 motion-safe:hover:-translate-y-1 hover:shadow-lg"
           >
-            <span className="text-sm text-persian-blue-600">{index + 1}.</span>
-            <h2 className="text-xl text-persian-blue-700">{phase.title}</h2>
-            <p className="mt-1">{phase.description}</p>
-            <span className="mt-2 inline-block text-sm">
+            <span className="flex size-10 items-center justify-center rounded-full bg-persian-blue-600 font-display font-semibold text-white">
+              {index + 1}
+            </span>{" "}
+            <h3 className="mt-5 text-xl font-semibold tracking-tight text-persian-blue-950">
+              {phase.title}
+            </h3>
+            <p className="mt-2 flex-1 text-slate-600">{phase.description}</p>
+            <span
+              className={`mt-6 inline-flex self-start rounded-full px-3 py-1 text-sm font-medium ring-1 ring-inset ${PhaseStatusStyle.CLASSES[phase.status]}`}
+            >
               {phase.status}
             </span>
           </li>

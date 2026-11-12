@@ -3,6 +3,11 @@ export class IndexPageCopy {
   static readonly SYSTEM_NAME = "School Route System";
   static readonly DESCRIPTION =
     "Un sistema para organizar las rutas escolares y mantener informadas a las familias.";
+  static readonly PHASES_HEADING = "Cómo se construirá el sistema";
+  static readonly PHASES_INTRO =
+    "Avanzamos por fases. Cada una suma una parte del sistema para la comunidad escolar.";
+  static readonly FOOTER_NOTE =
+    "School Route System · Transporte escolar organizado";
 }
 
 /** The statuses a phase can have, as shown to visitors. */
@@ -44,4 +49,14 @@ export class PhaseCopy {
       status: PhaseStatus.PLANNED,
     },
   ] as const;
+}
+
+/** Tailwind classes that color the status pill of a phase, one entry per status. */
+export class PhaseStatusStyle {
+  static readonly CLASSES: Readonly<Record<PhaseStatusValue, string>> = {
+    [PhaseStatus.PLANNED]:
+      "bg-persian-blue-50 text-persian-blue-700 ring-persian-blue-200",
+    [PhaseStatus.IN_PROGRESS]: "bg-amber-50 text-amber-800 ring-amber-200",
+    [PhaseStatus.AVAILABLE]: "bg-emerald-50 text-emerald-800 ring-emerald-200",
+  };
 }

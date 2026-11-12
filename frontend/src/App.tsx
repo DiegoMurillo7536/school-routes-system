@@ -1,19 +1,22 @@
 import { Component } from "react";
-import { IndexPageCopy } from "./constants";
-import PhaseList from "./PhaseList";
+import Hero from "./Hero";
+import PhasesSection from "./PhasesSection";
+import SiteFooter from "./SiteFooter";
+import SiteHeader from "./SiteHeader";
 
-/** Index page: introduce the system and list its phases. */
+/** Index page: a landing page that introduces the system and lists its phases. */
 export default class App extends Component {
-  /** Render the system name, its description and the phases. */
+  /** Render the header, the hero, the phases section and the footer. */
   render() {
     return (
-      <main className="mx-auto max-w-2xl p-8 font-sans">
-        <h1 className="text-4xl text-persian-blue-700">
-          {IndexPageCopy.SYSTEM_NAME}
-        </h1>
-        <p className="mt-4">{IndexPageCopy.DESCRIPTION}</p>
-        <PhaseList />
-      </main>
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader />
+        <main className="flex-1">
+          <Hero />
+          <PhasesSection />
+        </main>
+        <SiteFooter />
+      </div>
     );
   }
 }

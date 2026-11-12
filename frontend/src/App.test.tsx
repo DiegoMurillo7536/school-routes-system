@@ -139,3 +139,29 @@ describe("S4 Do not show the system status message", () => {
     expect(screen.queryByText("API unreachable")).toBeNull();
   });
 });
+
+describe("S5 Show the overview when the API cannot be reached", () => {
+  it("S5 shows the system name and the four phases when the API cannot be reached", async () => {
+    // Arrange
+    FetchStub.unreachableApi();
+
+    // Act
+    render(<App />);
+    await PendingWork.settle();
+
+    // Assert
+    expect(
+      screen.getByRole("heading", { level: 1, name: "School Route System" }),
+    ).toBeTruthy();
+    const phases = within(screen.getByRole("list")).getAllByRole("listitem");
+    expect(phases).toHaveLength(4);
+    expect(
+      phases.map((phase) => within(phase).getByRole("heading").textContent),
+    ).toEqual([
+      "Administradores de rutas",
+      "Estudiantes",
+      "Padres y acudientes o tutores",
+      "Ejecución de rutas",
+    ]);
+  });
+});

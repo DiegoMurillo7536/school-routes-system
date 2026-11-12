@@ -1,13 +1,25 @@
 import { Component } from "react";
 import { PhaseCopy } from "./constants";
 
+/** A phase shown on the index page. */
+interface Phase {
+  title: string;
+  description: string;
+  status: string;
+}
+
+/** The props of PhaseList: the phases to show, defaulting to the real ones. */
+interface PhaseListProps {
+  phases?: readonly Phase[];
+}
+
 /** Ordered list of the system phases, each with its number, title, description and status. */
-export default class PhaseList extends Component {
+export default class PhaseList extends Component<PhaseListProps> {
   /** Render one numbered card per phase, in the order they are defined. */
   render() {
     return (
       <ol className="mt-8 space-y-4">
-        {PhaseCopy.PHASES.map((phase, index) => (
+        {(this.props.phases ?? PhaseCopy.PHASES).map((phase, index) => (
           <li
             key={phase.title}
             className="rounded border border-persian-blue-200 p-4"
@@ -16,7 +28,7 @@ export default class PhaseList extends Component {
             <h2 className="text-xl text-persian-blue-700">{phase.title}</h2>
             <p className="mt-1">{phase.description}</p>
             <span className="mt-2 inline-block text-sm">
-              {PhaseCopy.PLANNED_STATUS}
+              {phase.status}
             </span>
           </li>
         ))}
